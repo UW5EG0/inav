@@ -166,7 +166,7 @@ static long cms_Vtx_Commence(displayPort_t *pDisp, const void *self)
     vtxSettingsConfigMutable()->channel = vtxChan;
     vtxSettingsConfigMutable()->power = vtxPower;
 
-    saveConfigAndNotify();
+    saveConfigAndNotify(true);
 
     return MENU_CHAIN_BACK;
 }

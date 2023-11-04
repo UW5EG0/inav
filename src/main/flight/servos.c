@@ -508,7 +508,7 @@ void processServoAutotrimMode(void)
             case AUTOTRIM_SAVE_PENDING:
                 // Wait for disarm and save to EEPROM
                 if (!ARMING_FLAG(ARMED)) {
-                    saveConfigAndNotify();
+                    saveConfigAndNotify(false);
                     trimState = AUTOTRIM_DONE;
                 }
                 break;
@@ -598,7 +598,7 @@ void processContinuousServoAutotrim(const float dT)
         }
     } else if (trimState == AUTOTRIM_COLLECTING) {
         // We have disarmed, save midpoints to EEPROM
-        saveConfigAndNotify();
+        saveConfigAndNotify(false);
         trimState = AUTOTRIM_IDLE;
     }
 

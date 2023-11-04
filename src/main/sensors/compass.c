@@ -453,7 +453,7 @@ void compassUpdate(timeUs_t currentTimeUs)
             }
 
             calStartedAt = 0;
-            saveConfigAndNotify();
+            saveConfigAndNotify(true);
         }
     }
     else {

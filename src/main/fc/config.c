@@ -149,7 +149,8 @@ PG_RESET_TEMPLATE(adcChannelConfig_t, adcChannelConfig,
 #define SAVESTATE_SAVEONLY 1
 #define SAVESTATE_SAVEANDNOTIFY 2
 
-static uint8_t saveState = SAVESTATE_NONE;
+static uint8_t  saveState = SAVESTATE_NONE;
+static bool     readAfterSave = true;
 
 void validateNavConfig(void)
 {
@@ -265,7 +266,7 @@ void validateAndFixConfig(void)
 void applyAndSaveBoardAlignmentDelta(int16_t roll, int16_t pitch)
 {
     updateBoardAlignment(roll, pitch);
-    saveConfigAndNotify();
+    saveConfigAndNotify(true);
 }
 
 // Default settings
@@ -343,12 +344,16 @@ void processSaveConfigAndNotify(void)
 {
     suspendRxSignal();
     writeEEPROM();
-    readEEPROM();
+
+    if (readAfterSave)
+        readEEPROM();
+
     resumeRxSignal();
     beeperConfirmationBeeps(1);
 #ifdef USE_OSD
     osdShowEEPROMSavedNotification();
 #endif
+    readAfterSave = true;
 }
 
 void writeEEPROM(void)
@@ -376,8 +381,10 @@ void ensureEEPROMContainsValidData(void)
  * Used to save the EEPROM and notify the user with beeps and OSD notifications.
  * This consolidates all save calls in the loop in to a single save operation. This save is actioned in the next loop, if the model is disarmed.
  */
-void saveConfigAndNotify(void)
+void saveConfigAndNotify(bool readEEPROMAfterSave)
 {
+    if (!readEEPROMAfterSave)
+        readAfterSave = false;
 #ifdef USE_OSD
     osdStartedSaveProcess();
 #endif

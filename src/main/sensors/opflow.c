@@ -229,7 +229,7 @@ void opflowUpdate(timeUs_t currentTimeUs)
                 // Finish calibration if we accumulated more than 3600 deg of rotation over 30 seconds
                 if (opflowCalibrationBodyAcc > 3600.0f) {
                     opticalFlowConfigMutable()->opflow_scale = opflowCalibrationFlowAcc / opflowCalibrationBodyAcc;
-                    saveConfigAndNotify();
+                    saveConfigAndNotify(true);
                 }
 
                 opflowIsCalibrating = 0;

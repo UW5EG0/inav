@@ -491,7 +491,7 @@ static void performAcclerationCalibration(void)
         else {
             // saveConfigAndNotify will trigger eepromREAD and in turn call back the accelerometer gain validation
             // that will set ENABLE_STATE(ACCELEROMETER_CALIBRATED) if all is good
-            saveConfigAndNotify();
+            saveConfigAndNotify(true);
             //Recompute all coeffs
             updateAccCoefficients();
         }

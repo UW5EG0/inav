@@ -3519,7 +3519,7 @@ bool saveNonVolatileWaypointList(void)
 #ifdef USE_MULTI_MISSION
     navConfigMutable()->general.waypoint_multi_mission_index = 1;    // reset selected mission to 1 when new entries saved
 #endif
-    saveConfigAndNotify();
+    saveConfigAndNotify(true);
 
     return true;
 }

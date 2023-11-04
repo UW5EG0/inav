@@ -342,7 +342,7 @@ void processRcStickPositions(bool isThrottleLow)
 
     // Save config
     if (rcSticks == THR_LO + YAW_LO + PIT_LO + ROL_HI) {
-        saveConfigAndNotify();
+        saveConfigAndNotify(true);
     }
 
     // Calibrating Acc

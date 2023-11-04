@@ -266,7 +266,7 @@ void spektrumBind(rxConfig_t *rxConfig)
     // Reset only when autoreset is enabled
     if (rxConfig->spektrum_sat_bind_autoreset == 1 && !isMPUSoftReset()) {
         rxConfig->spektrum_sat_bind = 0;
-        saveConfigAndNotify();
+        saveConfigAndNotify(true);
     }
 #endif
 

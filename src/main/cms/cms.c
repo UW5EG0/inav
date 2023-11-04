@@ -887,7 +887,7 @@ long cmsMenuExit(displayPort_t *pDisplay, const void *ptr)
             }
         }
 
-        saveConfigAndNotify();
+        saveConfigAndNotify(true);
         break;
 
     case CMS_EXIT:

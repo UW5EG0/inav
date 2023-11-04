@@ -127,7 +127,7 @@ void ensureEEPROMContainsValidData(void);
 void processDelayedSave(void);
 
 void saveConfig(void);
-void saveConfigAndNotify(void);
+void saveConfigAndNotify(bool readEEPROMAfterSave);
 void validateAndFixConfig(void);
 void validateAndFixTargetConfig(void);
 
