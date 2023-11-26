@@ -55,6 +55,7 @@ PG_RESET_TEMPLATE(vtxSettingsConfig_t, vtxSettingsConfig,
     .lowPowerDisarm = SETTING_VTX_LOW_POWER_DISARM_DEFAULT,
     .maxPowerOverride = SETTING_VTX_MAX_POWER_OVERRIDE_DEFAULT,
     .frequencyGroup = SETTING_VTX_FREQUENCY_GROUP_DEFAULT,
+    .pitmodeForceDisable = SETTING_VTX_PITMODE_FORCE_DISABLE_DEFAULT,
 );
 
 typedef enum {
@@ -77,6 +78,7 @@ static vtxSettingsConfig_t * vtxGetRuntimeSettings(void)
     settings.power = vtxSettingsConfig()->power;
     settings.pitModeChan = vtxSettingsConfig()->pitModeChan;
     settings.lowPowerDisarm = vtxSettingsConfig()->lowPowerDisarm;
+    settings.pitmodeForceDisable = vtxSettingsConfig()->pitmodeForceDisable;
 
     if (!ARMING_FLAG(ARMED) && !failsafeIsActive() &&
         ((settings.lowPowerDisarm == VTX_LOW_POWER_DISARM_ALWAYS) ||

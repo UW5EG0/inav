@@ -42,6 +42,7 @@ typedef struct vtxSettingsConfig_s {
     uint8_t lowPowerDisarm;     // min power while disarmed, from vtxLowerPowerDisarm_e
     uint16_t maxPowerOverride;  // for VTX drivers that are polling VTX capabilities - override what VTX is reporting
     uint8_t frequencyGroup;     // Frequencies being used, i.e. 5.8, 2.4, or 1.3 GHz 
+    uint8_t pitmodeForceDisable;// OFF/ON disables pitmode if any source enables in at a time 
 } vtxSettingsConfig_t;
 
 PG_DECLARE(vtxSettingsConfig_t, vtxSettingsConfig);

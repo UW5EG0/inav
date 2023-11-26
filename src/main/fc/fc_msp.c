@@ -1444,6 +1444,10 @@ static bool mspFcProcessOutCommand(uint16_t cmdMSP, sbuf_t *dst, mspPostProcessF
                 // Return band, channel and power from vtxSettingsConfig_t
                 // since the VTX might be configured but temporarily offline.
                 uint8_t pitmode = 0;
+                if (vtxSettingsConfig()->pitmodeForceDisable)
+                {
+                    vtxCommonSetPitMode(vtxDevice,0);
+                }
                 vtxCommonGetPitMode(vtxDevice, &pitmode);
 
                 sbufWriteU8(dst, deviceType);

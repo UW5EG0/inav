@@ -6082,6 +6082,15 @@ Enable the alternate softserial method. This is the method used in INAV 3.0 and 
 
 ---
 
+### vtx_pitmode_force_disable
+
+Disables pit-mode capability if any source make wrong control to execute pitmode. For Example, Expesslrs LUA-mistake sends force ON to pit mode in any condition.
+| Default | Min | Max |
+| --- | --- | --- |
+| OFF | OFF | ON |
+
+---
+
 ### vtx_smartaudio_early_akk_workaround
 
 Enable workaround for early AKK SAudio-enabled VTX bug.
