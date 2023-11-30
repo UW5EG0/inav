@@ -237,11 +237,11 @@ static const OSD_Entry cms_menuVtxEntries[] =
 {
     OSD_LABEL_ENTRY("--- VTX ---"),
     OSD_LABEL_FUNC_DYN_ENTRY("", cms_Vtx_drawStatusString),
-    OSD_TAB_CALLBACK_ENTRY("PIT",   cms_Vtx_configPitMode, &cms_Vtx_EntPitMode),
     OSD_TAB_CALLBACK_ENTRY("BAND",  cms_Vtx_configBand,    &cms_Vtx_EntBand),
     OSD_TAB_CALLBACK_ENTRY("CHAN",  cms_Vtx_configChan,    &cms_Vtx_EntChan),
     OSD_TAB_CALLBACK_ENTRY("POWER", cms_Vtx_configPower,   &cms_Vtx_EntPower),
-
+    OSD_TAB_CALLBACK_ENTRY("PIT",   cms_Vtx_configPitMode, &cms_Vtx_EntPitMode),
+    
     OSD_SUBMENU_ENTRY("SET", &cms_menuCommence),
     OSD_BACK_AND_END_ENTRY,
 };
