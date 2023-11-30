@@ -256,6 +256,11 @@ static vtxProtoResponseType_e vtxProtoProcessResponse(void)
 
 static void vtxProtoSetPitMode(uint16_t mode)
 {
+     //added override pitmode parameter
+    if (vtxSettingsConfig()->pitmodeForceDisable)
+        {
+            mode = 0;
+        }
     vtxProtoSend(0x73, mode);
 }
 

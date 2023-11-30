@@ -836,6 +836,12 @@ void vtxSASetBandAndChannel(vtxDevice_t *vtxDevice, uint8_t band, uint8_t channe
 
 static void vtxSASetPitMode(vtxDevice_t *vtxDevice, uint8_t onoff)
 {
+    //added override pitmode parameter
+    if (vtxSettingsConfig()->pitmodeForceDisable)
+        {
+            onoff = 0;
+        }
+
     if (!vtxSAIsReady(vtxDevice) || saDevice.version < SA_1_0) {
         return;
     }
