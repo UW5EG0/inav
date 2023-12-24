@@ -34,6 +34,7 @@
 
 #if defined(USE_VTX_SMARTAUDIO) || defined(USE_VTX_TRAMP) || defined(USE_VTX_MSP)
 
+
 #define VTX_SETTINGS_POWER_COUNT        5
 #define VTX_SETTINGS_DEFAULT_POWER      1
 #define VTX_SETTINGS_MIN_POWER          1
@@ -41,7 +42,6 @@
 #define VTX_SETTINGS_MAX_USER_FREQ      5999
 #define VTX_SETTINGS_FREQCMD
 #define VTX_SETTINGS_MAX_POWER          (VTX_SETTINGS_POWER_COUNT - VTX_SETTINGS_MIN_POWER + 1)
-
 #else
 
 #define VTX_SETTINGS_DEFAULT_POWER      0
@@ -91,6 +91,7 @@ typedef struct vtxDeviceOsdInfo_s {
     const char * channelName;
     char powerIndexLetter;
 } vtxDeviceOsdInfo_t;
+
 
 typedef struct vtxDevice_s {
     const struct vtxVTable_s * const vTable;

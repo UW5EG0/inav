@@ -5,7 +5,9 @@
         "ranges": "c",
         "parameter_group.h": "c",
         "vtx_common.h": "c",
-        "parameter_group_ids.h": "c"
+        "parameter_group_ids.h": "c",
+        "vtx.h": "c",
+        "vtx_string.h": "c"
     },
     "editor.tabSize": 4,
     "editor.insertSpaces": true,

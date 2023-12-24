@@ -233,6 +233,21 @@ static const CMS_Menu cms_menuCommence = {
     .entries = cms_menuCommenceEntries,
 };
 
+#ifdef USE_VTX_PRESETS
+static const OSD_Entry cms_menuCustomParamsEntries [] = 
+{
+    OSD_LABEL_ENTRY("VTX CONFIGS"),
+    OSD_BACK_AND_END_ENTRY,
+};
+
+static const CMS_Menu cms_menuCustomParams = {
+    .onEnter = NULL,
+    .onExit = NULL,
+    .onGlobalExit = NULL,
+    .entries = cms_menuCustomParamsEntries,
+};
+#endif
+
 static const OSD_Entry cms_menuVtxEntries[] =
 {
     OSD_LABEL_ENTRY("--- VTX ---"),
@@ -241,7 +256,9 @@ static const OSD_Entry cms_menuVtxEntries[] =
     OSD_TAB_CALLBACK_ENTRY("CHAN",  cms_Vtx_configChan,    &cms_Vtx_EntChan),
     OSD_TAB_CALLBACK_ENTRY("POWER", cms_Vtx_configPower,   &cms_Vtx_EntPower),
     OSD_TAB_CALLBACK_ENTRY("PIT",   cms_Vtx_configPitMode, &cms_Vtx_EntPitMode),
-    
+    #ifdef USE_VTX_PRESETS
+    OSD_SUBMENU_ENTRY("CUSTOMIZE", &cms_menuCustomParams),
+    #endif
     OSD_SUBMENU_ENTRY("SET", &cms_menuCommence),
     OSD_BACK_AND_END_ENTRY,
 };

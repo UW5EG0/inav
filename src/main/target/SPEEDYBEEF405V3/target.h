@@ -153,7 +153,11 @@
 #define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
 #define DEFAULT_RX_TYPE         RX_TYPE_SERIAL
-#define SERIALRX_PROVIDER       SERIALRX_SBUS
+#define SERIALRX_PROVIDER       SERIALRX_CRSF
+
+//Custom defines for additional equipment
+#define USE_VTX_AKKLRVTX
+#define USE_VTX_PRESETS
 
 #define MAX_PWM_OUTPUT_PORTS        8
 

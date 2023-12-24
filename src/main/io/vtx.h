@@ -45,7 +45,32 @@ typedef struct vtxSettingsConfig_s {
     uint8_t pitmodeForceDisable;// OFF/ON disables pitmode if any source enables in at a time 
 } vtxSettingsConfig_t;
 
+typedef struct vtxConfigPreset_s {
+    uint8_t isActive;
+    int8_t band; // Band = 1 - 5, -1 = no change
+    int8_t channel; // CH1 = 1 - 8, -1 = no change
+    int8_t powerIndex; // Lowest/Off = 0, -1 = no change
+    int8_t pitMode; // 0 = non-PIT, 1 = PIT, -1 = no change
+     #ifdef USE_PROGRAMMING_FRAMEWORK
+    uint8_t conditionId; // Logic Conditions 0-64
+    #else 
+    uint8_t rcChannel; // 1 - 16
+    uint16_t minRangeUS; // 800-2200 - depends from rc defines  
+    uint16_t maxRangeUS; // 800-2200 - depends from rc defines
+    #endif
+    
+} vtxConfigPreset_t;
+
+#define VTX_SETTINGS_PRESETS_MAX_COUNT 6
+#define VTX_SETTINGS_PRESETS_DEFAULT_BAND -1
+#define VTX_SETTINGS_PRESETS_DEFAULT_CHANNEL -1
+#define VTX_SETTINGS_PRESETS_DEFAULT_POWER -1
+#define VTX_SETTINGS_PRESETS_DEFAULT_PITMODE -1
+#define VTX_SETTINGS_PRESETS_DEFAULT_CONDITION_ID -1
+
 PG_DECLARE(vtxSettingsConfig_t, vtxSettingsConfig);
+PG_DECLARE_ARRAY(vtxConfigPreset_t, VTX_SETTINGS_PRESETS_MAX_COUNT, customVTXPresets);
 
 void vtxInit(void);
 void vtxUpdate(timeUs_t currentTimeUs);
+void Reset_vtxPresets(vtxConfigPreset_t * instance);
