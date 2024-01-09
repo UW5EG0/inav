@@ -119,7 +119,7 @@ smartAudioStat_t saStat = {
 };
 
 // Fill table with standard values for SA 1.0 and 2.0
-saPowerTable_t saPowerTable[VTX_SMARTAUDIO_MAX_POWER_COUNT] = {
+ saPowerTable_t saPowerTable[VTX_SMARTAUDIO_MAX_POWER_COUNT] = {
     #ifdef USE_VTX_AKKLRVTX
     {250, 24}, // 23.9794000867
     {500, 27}, // 26.9897000434
@@ -134,7 +134,6 @@ saPowerTable_t saPowerTable[VTX_SMARTAUDIO_MAX_POWER_COUNT] = {
     {   0,   0 } // Placeholder
     #endif
 };
-
 // Last received device ('hard') states
 
 smartAudioDevice_t saDevice = {

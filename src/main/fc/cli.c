@@ -94,7 +94,6 @@ bool cliMode = false;
 #include "io/ledstrip.h"
 #include "io/osd.h"
 #include "io/serial.h"
-#include "io/vtx.h"
 
 #include "fc/fc_msp_box.h"
 
@@ -1922,150 +1921,6 @@ static void cliServoMix(char *cmdline)
         }
     }
 }
-
-#ifdef USE_VTX_PRESETS
-
-static void printVtxPresets(uint8_t dumpMask, const vtxConfigPreset_t *customVTXPresets, const vtxConfigPreset_t *defaultCustomVTXPresets)
-{
-     #ifdef USE_PROGRAMMING_FRAMEWORK
-    const char *format = "vtx %d %d %d %d %d %d";
-            #else 
-    const char *format = "vtx %d %d %d %d %d %d %d %d";
-            #endif
-    for (uint32_t i = 0; i < VTX_SETTINGS_PRESETS_MAX_COUNT; i++) {
-        const vtxConfigPreset_t customVTXPreset = customVTXPresets[i];
-        if (customVTXPreset.isActive == 0) {
-            break;
-        }
-
-        bool equalsDefault = false;
-        if (defaultCustomVTXPresets) {
-            vtxConfigPreset_t customVTXPresetDefault = defaultCustomVTXPresets[i];
-            equalsDefault = customVTXPreset.band == customVTXPresetDefault.band
-                && customVTXPreset.channel == customVTXPresetDefault.channel
-                && customVTXPreset.powerIndex == customVTXPresetDefault.powerIndex
-                && customVTXPreset.pitMode == customVTXPresetDefault.pitMode
-            #ifdef USE_PROGRAMMING_FRAMEWORK
-                && customVTXPreset.conditionId == customVTXPresetDefault.conditionId
-            #else 
-                && customVTXPreset.rcChannel == customVTXPresetDefault.rcChannel
-                && customVTXPreset.minRangeUS == customVTXPresetDefault.minRangeUS
-                && customVTXPreset.maxRangeUS == customVTXPresetDefault.maxRangeUS
-            #endif
-            ;
-
-            cliDefaultPrintLinef(dumpMask, equalsDefault, format,
-                i,
-                customVTXPresetDefault.band,
-                customVTXPresetDefault.channel,
-                customVTXPresetDefault.powerIndex,
-                customVTXPresetDefault.pitMode,
-            #ifdef USE_PROGRAMMING_FRAMEWORK
-                customVTXPresetDefault.conditionId
-            #else
-                customVTXPresetDefault.rcChannel,
-                customVTXPresetDefault.minRangeUS,
-                customVTXPresetDefault.maxRangeUS,
-            #endif
-            );
-        }
-        cliDumpPrintLinef(dumpMask, equalsDefault, format,
-            i,
-           customVTXPreset.band,
-                customVTXPreset.channel,
-                customVTXPreset.powerIndex,
-                customVTXPreset.pitMode,
-            #ifdef USE_PROGRAMMING_FRAMEWORK
-                customVTXPreset.conditionId
-            #else
-                customVTXPreset.rcChannel,
-                customVTXPreset.minRangeUS,
-                customVTXPreset.maxRangeUS
-            #endif
-            );
-    }
-}
-
-
-static void cliVtxPresets(char *cmdline)
-{
-    char * saveptr;
-            #ifdef USE_PROGRAMMING_FRAMEWORK
-    int args[7];
-            #else
-    int args[9];
-            #endif
-    
-    int check = 0;
-    uint8_t len = strlen(cmdline);
-//<rule> <active> <band> <channel> <power> <pit> [<conditionId>|<rcChannel> <minRangeUS> <maxRangeUS>]
-    if (len == 0) {
-        printVtxPresets(DUMP_MASTER, customVTXPresetsMutable(0), NULL);
-        //printServoMix(DUMP_MASTER, customServoMixers(0), NULL);
-    } else if (sl_strncasecmp(cmdline, "reset", 5) == 0) {
-        // erase custom presets
-        Reset_vtxPresets(customVTXPresetsMutable(0));
-        //Reset_servoMixers(customServoMixersMutable(0));
-    } else {
-        #ifdef USE_PROGRAMMING_FRAMEWORK
-        enum {RULE = 0, ACTIVE, BAND, CHANNEL, POWER, PIT, CONDITION, ARGS_COUNT};
-        #else 
-        enum {RULE = 0, ACTIVE, BAND, CHANNEL, POWER, PIT, RCCHANNEL, RC_MIN_US, RC_MAX_US, ARGS_COUNT};
-        #endif
-        char *ptr = strtok_r(cmdline, " ", &saveptr);
-        args[CONDITION] = -1;
-        while (ptr != NULL && check < ARGS_COUNT) {
-            args[check++] = fastA2I(ptr);
-            ptr = strtok_r(NULL, " ", &saveptr);
-        }
-
-        if (ptr != NULL || (check < ARGS_COUNT - 1)) {
-            cliShowParseError();
-            return;
-        }
-
-        int32_t i = args[RULE];
-        if ( //check validity
-            i >= 0 && i < VTX_SETTINGS_PRESETS_MAX_COUNT &&
-            args[ACTIVE] >= 0 && args[ACTIVE] <2 &&
-            (args[BAND] == -1 || (args[BAND] >= VTX_SETTINGS_MIN_BAND && args[BAND] >= VTX_SETTINGS_MAX_BAND)) &&
-            (args[CHANNEL] == -1 || (args[CHANNEL] >= VTX_SETTINGS_MIN_CHANNEL && args[CHANNEL] >= VTX_SETTINGS_MAX_CHANNEL)) &&
-            (args[POWER] == -1 || (args[POWER] >= VTX_SETTINGS_MIN_POWER && args[POWER] >= VTX_SETTINGS_MAX_POWER)) &&
-            args[PIT] >= -1 && args[PIT] <2 &&
-            #ifdef USE_PROGRAMMING_FRAMEWORK
-            args[CONDITION] >= -1 && args[CONDITION] < MAX_LOGIC_CONDITIONS
-            #else
-            args[RCCHANNEL] >= 1 && args[RCCHANNEL] < MAX_SUPPORTED_RC_CHANNEL_COUNT &&
-            args[RC_MIN_US] < args[RC_MAX_US] &&
-            args[RC_MIN_US] >= PWM_PULSE_MIN && args[RC_MIN_US] <= PWM_PULSE_MAX &&
-            args[RC_MAX_US] >= PWM_PULSE_MIN && args[RC_MAX_US] <= PWM_PULSE_MAX &&
-            #endif
-        ) {
-            // process save
-            customVTXPresetsMutable(i)->isActive = args[ACTIVE];
-            customVTXPresetsMutable(i)->band = args[BAND];
-            customVTXPresetsMutable(i)->channel = args[CHANNEL];
-            customVTXPresetsMutable(i)->powerIndex = args[POWER];
-            customVTXPresetsMutable(i)->pitMode = args[PIT];
-            
-        #ifdef USE_PROGRAMMING_FRAMEWORK
-            customVTXPresetsMutable(i)->conditionId = args[CONDITION];
-        #else
-            customVTXPresetsMutable(i)->rcChannel = args[RCCHANNEL];
-            customVTXPresetsMutable(i)->minRangeUS = args[RC_MIN_US];
-            customVTXPresetsMutable(i)->maxRangeUS = args[RC_MAX_US];
-            
-        #endif
-            cliServoMix("");
-        } else {
-            cliShowParseError();
-        }
-    }
-}
-
-
-
-#endif
 
 #ifdef USE_PROGRAMMING_FRAMEWORK
 
@@ -4239,10 +4094,6 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("smix", "servo mixer",
         "<rule> <servo> <source> <rate> <speed> <conditionId>\r\n"
         "\treset\r\n", cliServoMix),
-#ifdef USE_VTX_PRESETS
-    CLI_COMMAND_DEF("vtx", "Set VTX presets from logic conditions",
-        "<rule> <active> <band> <channel> <power> <pit> <conditionId>", cliVtxPresets),
-#endif
 #ifdef USE_SDCARD
     CLI_COMMAND_DEF("sd_info", "sdcard info", NULL, cliSdInfo),
 #endif

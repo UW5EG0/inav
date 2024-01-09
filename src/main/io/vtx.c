@@ -30,7 +30,6 @@
 
 #include "config/parameter_group.h"
 #include "config/parameter_group_ids.h"
-#include "config/config_reset.h"
 
 #include "drivers/vtx_common.h"
 
@@ -196,26 +195,6 @@ void vtxUpdate(timeUs_t currentTimeUs)
         vtxCommonProcess(vtxDevice, currentTimeUs);
 
         currentSchedule = (currentSchedule + 1) % VTX_PARAM_COUNT;
-    }
-}
-
-void Reset_vtxPresets(vtxConfigPreset_t *instance)
-{
-    for (int i = 0; i < VTX_SETTINGS_PRESETS_MAX_COUNT; i++){
-        RESET_CONFIG(vtxConfigPreset_t, &instance[i],
-            .isActive = 0,
-            .band = VTX_SETTINGS_PRESETS_DEFAULT_BAND,
-            .channel = VTX_SETTINGS_PRESETS_DEFAULT_CHANNEL,
-            .powerIndex = VTX_SETTINGS_PRESETS_DEFAULT_POWER,
-            .pitMode = VTX_SETTINGS_PRESETS_DEFAULT_PITMODE
-#ifdef USE_PROGRAMMING_FRAMEWORK
-            ,.conditionId = -1
-            #else
-            .rcChannel = 12,
-            .minRangeUS = 1000,
-            .maxRangeUS = 2000,
-#endif
-        );       
     }
 }
 
