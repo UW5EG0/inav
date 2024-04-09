@@ -159,7 +159,7 @@
 #define USE_VTX_AKKLRVTX
 #define USE_VTX_PRESETS
 
-#define MAX_PWM_OUTPUT_PORTS        8
+#define MAX_PWM_OUTPUT_PORTS        9
 
 #define CURRENT_METER_SCALE         386
 
