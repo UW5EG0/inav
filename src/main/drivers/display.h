@@ -36,6 +36,13 @@ typedef struct displayConfig_s {
 
 PG_DECLARE(displayConfig_t, displayConfig);
 
+typedef struct vcdProfile_s {
+    int8_t h_offset;
+    int8_t v_offset;
+} vcdProfile_t;
+
+PG_DECLARE(vcdProfile_t, vcdProfile);
+
 typedef enum {
     DISPLAY_TRANSACTION_OPT_NONE = 0,
     DISPLAY_TRANSACTION_OPT_PROFILED = 1 << 0,

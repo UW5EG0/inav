@@ -202,6 +202,8 @@ typedef struct max7456Registers_s {
 typedef struct max7456State_s {
     busDevice_t *dev;
     videoSystem_e videoSystem;
+    uint8_t  hosRegValue; // HOS (Horizontal offset register) value
+    uint8_t  vosRegValue; // VOS (Vertical offset register) value
     bool isInitialized;
     bool mutex;
     max7456Registers_t registers;
@@ -324,7 +326,7 @@ uint8_t max7456GetRowsCount(void)
 //it might already have some data by the first time this function is called.
 static void max7456ReInit(void)
 {
-    uint8_t buf[2 * 2];
+    uint8_t buf[4 * 2];
     int bufPtr = 0;
     uint8_t statVal;
 
@@ -362,6 +364,8 @@ static void max7456ReInit(void)
 
     // Enable OSD drawing and clear the display
     bufPtr = max7456PrepareBuffer(buf, sizeof(buf), bufPtr, MAX7456ADD_VM0, state.registers.vm0);
+    bufPtr = max7456PrepareBuffer(buf, sizeof(buf), bufPtr, MAX7456ADD_HOS, state.hosRegValue);
+    bufPtr = max7456PrepareBuffer(buf, sizeof(buf), bufPtr, MAX7456ADD_VOS, state.vosRegValue);
     bufPtr = max7456PrepareBuffer(buf, sizeof(buf), bufPtr, MAX7456ADD_DMM, DMM_CLEAR_DISPLAY);
 
     // Transfer data to SPI
@@ -376,7 +380,7 @@ static void max7456ReInit(void)
 }
 
 //here we init only CS and try to init MAX for first time
-void max7456Init(const videoSystem_e videoSystem)
+void max7456Init(const videoSystem_e videoSystem, int h_offset, int v_offset)
 {
     uint8_t buf[(MAX7456_LINES_PAL + 1) * 2];
     int bufPtr;
@@ -394,6 +398,9 @@ void max7456Init(const videoSystem_e videoSystem)
     // DMM defaults to all zeroes on reset
     state.registers.dmm = 0;
     state.videoSystem = videoSystem;
+    state.hosRegValue = 32 - h_offset;
+    state.vosRegValue = 16 - v_offset;
+ 
 
     // Set screen buffer to all blanks
     for (uint_fast16_t ii = 0; ii < ARRAYLEN(osdCharacterGridBuffer); ii++) {
@@ -419,6 +426,8 @@ void max7456Init(const videoSystem_e videoSystem)
     bufPtr = max7456PrepareBuffer(buf, sizeof(buf), bufPtr, MAX7456ADD_VM1, BLINK_DUTY_CYCLE_50_50 | BLINK_TIME_3 | BACKGROUND_BRIGHTNESS_28);
     busTransfer(state.dev, NULL, buf, bufPtr);
 }
+
+
 
 void max7456ClearScreen(void)
 {

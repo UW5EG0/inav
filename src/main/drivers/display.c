@@ -46,6 +46,14 @@ PG_RESET_TEMPLATE(displayConfig_t, displayConfig,
     .force_sw_blink = SETTING_DISPLAY_FORCE_SW_BLINK_DEFAULT
 );
 
+PG_REGISTER_WITH_RESET_TEMPLATE(vcdProfile_t, vcdProfile, PG_VCD_CONFIG, 0);
+
+PG_RESET_TEMPLATE(vcdProfile_t, vcdProfile,
+    .h_offset = SETTING_VCD_H_OFFSET_DEFAULT,
+    .v_offset = SETTING_VCD_V_OFFSET_DEFAULT,
+);
+
+
 static bool displayAttributesRequireEmulation(displayPort_t *instance, textAttributes_t attr)
 {
     if (attr & ~instance->cachedSupportedTextAttributes) {
