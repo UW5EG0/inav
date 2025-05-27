@@ -2886,7 +2886,7 @@ static bool osdDrawSingleElement(uint8_t item)
                     break;
             }
 
-            osdFormatCentiNumber(buff, value, 0, 1, 0, 3, false);
+            osdFormatCentiNumber(buff, value, 0, 2, 0, 3, false);
             buff[3] = sym;
             buff[4] = '\0';
             break;
