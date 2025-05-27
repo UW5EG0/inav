@@ -3839,6 +3839,26 @@ groups:
     table: osdSpeedSource
     type: uint8_t
 
+- name: PG_VCD_CONFIG
+  type: vcdProfile_t
+  headers: []
+  condition: USE_MAX7456
+  members:
+  - name: vcd_h_offset
+    type: int8_t
+    description: "Sets the horizontal offset to OSD position via MAX7456"
+    field: h_offset
+    default_value: 0
+    min: -32
+    max: 31
+  - name: vcd_v_offset
+    type: int8_t
+    description: "Sets the vertical offset to OSD position via MAX7456"
+    field: v_offset
+    default_value: 0
+    min: -15
+    max: 16
+
 - name: PG_SYSTEM_CONFIG
   type: systemConfig_t
   headers: [ "fc/config.h" ]
@@ -4028,28 +4048,28 @@ groups:
     description: "Mode assignment for PINIO#1"
     min: 0
     max: 255
-    default_value: BOX_PERMANENT_ID_NONE
+    default_value: :BOX_PERMANENT_ID_NONE
     type: uint8_t
   - name: pinio_box2
     field: permanentId[1]
     description: "Mode assignment for PINIO#2"
     min: 0
     max: 255
-    default_value: BOX_PERMANENT_ID_NONE
+    default_value: :BOX_PERMANENT_ID_NONE
     type: uint8_t
   - name: pinio_box3
     field: permanentId[2]
     description: "Mode assignment for PINIO#3"
     min: 0
     max: 255
-    default_value: BOX_PERMANENT_ID_NONE
+    default_value: :BOX_PERMANENT_ID_NONE
     type: uint8_t
   - name: pinio_box4
     field: permanentId[3]
     description: "Mode assignment for PINIO#4"
     min: 0
     max: 255
-    default_value: BOX_PERMANENT_ID_NONE
+    default_value: :BOX_PERMANENT_ID_NONE
     type: uint8_t
 
 - name: PG_LOG_CONFIG

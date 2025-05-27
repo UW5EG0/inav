@@ -21,6 +21,8 @@
 
 #include "drivers/osd.h"
 
+
+
 #ifndef MAX7456_WHITEBRIGHTNESS
   #define MAX7456_WHITEBRIGHTNESS 0x01
 #endif
@@ -44,7 +46,7 @@ enum VIDEO_TYPES { AUTO = 0, PAL, NTSC };
 #define MAX7456_MODE_BLINK    (1 << 4)
 #define MAX7456_MODE_SOLID_BG (1 << 5)
 
-void max7456Init(const videoSystem_e videoSystem);
+void max7456Init(const videoSystem_e videoSystem, int h_offset, int v_offset);
 void max7456Update(void);
 void max7456ReadNvm(uint16_t char_address, osdCharacter_t *chr);
 void max7456WriteNvm(uint16_t char_address, const osdCharacter_t *chr);

@@ -27,6 +27,8 @@
 #include "config/parameter_group.h"
 #include "config/parameter_group_ids.h"
 
+
+
 #include "drivers/display.h"
 #include "drivers/display_font_metadata.h"
 #include "drivers/max7456.h"
@@ -190,7 +192,7 @@ static const displayPortVTable_t max7456VTable = {
 
 displayPort_t *max7456DisplayPortInit(const videoSystem_e videoSystem)
 {
-    max7456Init(videoSystem);
+    max7456Init(videoSystem, vcdProfile()->h_offset, vcdProfile()->v_offset);
     displayInit(&max7456DisplayPort, &max7456VTable);
     resync(&max7456DisplayPort);
     max7456DisplayPort.displayPortType = "MAX7456";
