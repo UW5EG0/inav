@@ -524,7 +524,7 @@ void osdFormatAltitudeSymbol(char *buff, int32_t alt)
             FALLTHROUGH;
         case OSD_UNIT_METRIC:
             // alt is alredy in cm
-            if (osdFormatCentiNumber(buff + totalDigits - digits, alt, 1000, 0, 2, digits, false)) {
+            if (osdFormatCentiNumber(buff + totalDigits - digits, alt, 1000, 2, 2, digits, false)) {
                 // Scaled to km
                 buff[symbolIndex++] = SYM_ALT_KM;
             } else {
@@ -2886,9 +2886,9 @@ static bool osdDrawSingleElement(uint8_t item)
                     break;
             }
 
-            osdFormatCentiNumber(buff, value, 0, 2, 0, 3, false);
-            buff[3] = sym;
-            buff[4] = '\0';
+            osdFormatCentiNumber(buff, value, 0, 2, 0, 4, false);
+            buff[4] = sym;
+            buff[5] = '\0';
             break;
         }
     case OSD_CLIMB_EFFICIENCY:
