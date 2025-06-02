@@ -105,6 +105,7 @@
 #include "sensors/acceleration.h"
 #include "sensors/battery.h"
 #include "sensors/boardalignment.h"
+#include "sensors/barometer.h"
 #include "sensors/compass.h"
 #include "sensors/diagnostics.h"
 #include "sensors/sensors.h"
@@ -559,6 +560,60 @@ static void osdFormatAltitudeStr(char *buff, int32_t alt)
             tfp_sprintf(buff, "%d%c", (int)value, SYM_M);
             break;
     }
+}
+
+/**
+* Converts barometric altitude into a string based on the current unit system.
+* @param press Raw altitude/pressure (i.e. as taken from baro.BaroPressure in Pascals)
+*/
+void osdFormatAltitudePressureSymbol(char *buff, int32_t press){
+  char *ptr = buff;
+    bool explicitDecimal = isDJICompatibleVideoSystem(osdConfig());
+    
+    // Whole kilopascals
+    int32_t kPa = press / 1000;
+     // Remainder in pascals (3 digits)
+   int32_t pa = press % 1000;
+    
+      // Right alignment (6 symbols)
+    int digits = digitCount(kPa);
+    int spaces = 6 - digits - 3; // 3 for decimals
+    if (!explicitDecimal) {
+        spaces++;  // dot doesn't take separate space
+    }
+    
+    // Leading spaces
+    while (spaces > 0) {
+        *ptr++ = SYM_BLANK;
+        spaces--;
+    }
+    
+    // Output integer part    
+    ui2a(kPa, 10, 0, ptr);
+    ptr += digits;
+    
+    // Decimal part
+   if (explicitDecimal) {
+        *ptr++ = '.';
+    } else {
+        // Use symbol with embedded dot
+        *(ptr - 1) += SYM_ZERO_HALF_TRAILING_DOT - '0';
+    }
+    
+    // Output all 3 pascal digits
+    char *dec = ptr;
+    if (pa < 100) *ptr++ = '0';
+    if (pa < 10) *ptr++ = '0';
+    ui2a(pa, 10, 0, ptr);
+    
+    if (!explicitDecimal) {
+        *dec += SYM_ZERO_HALF_LEADING_DOT - '0';
+    }
+    
+    // K в кінці
+    ptr += digitCount(pa);
+    *ptr++ = 'K';
+    *ptr = '\0';
 }
 
 static void osdFormatTime(char *buff, uint32_t seconds, char sym_m, char sym_h)
@@ -1180,6 +1235,10 @@ int32_t osdGetAltitude(void)
 static inline int32_t osdGetAltitudeMsl(void)
 {
     return getEstimatedActualPosition(Z) + posControl.gpsOrigin.alt;
+}
+int32_t osdGetAltitudeKPa(void)
+{
+    return baroGetLatestPressure();
 }
 
 uint16_t osdGetRemainingGlideTime(void) {
@@ -2258,6 +2317,12 @@ static bool osdDrawSingleElement(uint8_t item)
             osdFormatAltitudeSymbol(buff, alt);
             break;
         }
+    case OSD_ALTITUDE_RAW_KPA:
+        {
+             int32_t press = osdGetAltitudeKPa();
+             osdFormatAltitudePressureSymbol(buff, press);
+             break;
+    }
 
 #ifdef USE_RANGEFINDER
     case OSD_RANGEFINDER:
