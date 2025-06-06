@@ -1064,7 +1064,7 @@ static bool mspFcProcessOutCommand(uint16_t cmdMSP, sbuf_t *dst, mspPostProcessF
         break;
 
     case MSP_FAILSAFE_CONFIG:
-        sbufWriteU8(dst, failsafeConfig()->failsafe_delay);
+        sbufWriteU8(dst, failsafeConfig()->failsafe_delay/10);
         sbufWriteU8(dst, failsafeConfig()->failsafe_off_delay);
         sbufWriteU16(dst, currentBatteryProfile->failsafe_throttle);
         sbufWriteU8(dst, 0);    // was failsafe_kill_switch
@@ -3022,7 +3022,7 @@ static mspResult_e mspFcProcessInCommand(uint16_t cmdMSP, sbuf_t *src)
 
     case MSP_SET_FAILSAFE_CONFIG:
         if (dataSize == 20) {
-            failsafeConfigMutable()->failsafe_delay = sbufReadU8(src);
+            failsafeConfigMutable()->failsafe_delay = sbufReadU8(src)*10;
             failsafeConfigMutable()->failsafe_off_delay = sbufReadU8(src);
             currentBatteryProfileMutable->failsafe_throttle = sbufReadU16(src);
             sbufReadU8(src); // was failsafe_kill_switch

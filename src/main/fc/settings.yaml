@@ -837,7 +837,7 @@ groups:
     description: "Time in deciseconds to wait before activating failsafe when signal is lost. See [Failsafe documentation](Failsafe.md#failsafe_delay)."
     default_value: 5
     min: 0
-    max: 200
+    max: 32000
   - name: failsafe_recovery_delay
     description: "Time in deciseconds to wait before aborting failsafe when signal is recovered. See [Failsafe documentation](Failsafe.md#failsafe_recovery_delay)."
     default_value: 5
