@@ -564,7 +564,7 @@ void mavlinkSendRCChannelsAndRSSI(void)
             GET_CHANNEL_VALUE(17),
             // rssi Receive signal strength indicator, 0: 0%, 254: 100%
     		//https://github.com/mavlink/mavlink/issues/1027
-            scaleRange(getRSSI(), 0, 1023, 0, 254));
+            scaleRange(getRSSI(), 0, 1023, 0, 253));
     }
 #undef GET_CHANNEL_VALUE
 
@@ -574,94 +574,127 @@ void mavlinkSendRCChannelsAndRSSI(void)
 #if defined(USE_GPS)
 void mavlinkSendPosition(timeUs_t currentTimeUs)
 {
-    uint8_t gpsFixType = 0;
-
-    if (!(sensors(SENSOR_GPS)
+    bool hasGPS = sensors(SENSOR_GPS)
 #ifdef USE_GPS_FIX_ESTIMATION
             || STATE(GPS_ESTIMATED_FIX)
 #endif
-        ))
-        return;
-
-    if (gpsSol.fixType == GPS_NO_FIX)
-        gpsFixType = 1;
-    else if (gpsSol.fixType == GPS_FIX_2D)
+    ;
+    
+    bool hasValidGPSFix = hasGPS && (gpsSol.fixType != GPS_NO_FIX);
+    bool hasBarometer = sensors(SENSOR_BARO);
+    
+    // Відправляємо GPS специфічні дані тільки якщо є GPS
+    if (hasGPS) {
+        uint8_t gpsFixType = 0;
+        
+        if (gpsSol.fixType == GPS_NO_FIX)
+            gpsFixType = 1;
+        else if (gpsSol.fixType == GPS_FIX_2D)
             gpsFixType = 2;
-    else if (gpsSol.fixType == GPS_FIX_3D)
+        else if (gpsSol.fixType == GPS_FIX_3D)
             gpsFixType = 3;
 
-    mavlink_msg_gps_raw_int_pack(mavSystemId, mavComponentId, &mavSendMsg,
-        // time_usec Timestamp (microseconds since UNIX epoch or microseconds since system boot)
-        currentTimeUs,
+        mavlink_msg_gps_raw_int_pack(mavSystemId, mavComponentId, &mavSendMsg,
+            // time_usec Timestamp (microseconds since UNIX epoch or microseconds since system boot)
+            currentTimeUs,
         // fix_type 0-1: no fix, 2: 2D fix, 3: 3D fix. Some applications will not use the value of this field unless it is at least two, so always correctly fill in the fix.
-        gpsFixType,
-        // lat Latitude in 1E7 degrees
-        gpsSol.llh.lat,
-        // lon Longitude in 1E7 degrees
-        gpsSol.llh.lon,
-        // alt Altitude in 1E3 meters (millimeters) above MSL
-        gpsSol.llh.alt * 10,
+            gpsFixType,
+            // lat Latitude in 1E7 degrees
+            gpsSol.llh.lat,
+            // lon Longitude in 1E7 degrees
+            gpsSol.llh.lon,
+            // alt Altitude in 1E3 meters (millimeters) above MSL
+            gpsSol.llh.alt * 10,
         // eph GPS HDOP horizontal dilution of position in cm (m*100). If unknown, set to: 65535
-        gpsSol.eph,
+            gpsSol.eph,
         // epv GPS VDOP horizontal dilution of position in cm (m*100). If unknown, set to: 65535
-        gpsSol.epv,
+            gpsSol.epv,
         // vel GPS ground speed (m/s * 100). If unknown, set to: 65535
-        gpsSol.groundSpeed,
+            gpsSol.groundSpeed,
         // cog Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: 65535
-        gpsSol.groundCourse * 10,
+            gpsSol.groundCourse * 10,
         // satellites_visible Number of satellites visible. If unknown, set to 255
-        gpsSol.numSat,
+            gpsSol.numSat,
         // alt_ellipsoid Altitude (above WGS84, EGM96 ellipsoid). Positive for up
-        0,
+            0,
         // h_acc Position uncertainty in mm,
-        gpsSol.eph * 10,
+            gpsSol.eph * 10,
         // v_acc Altitude uncertainty in mm,
-        gpsSol.epv * 10,
+            gpsSol.epv * 10,
         // vel_acc Speed uncertainty in mm (??)
-        0,
-        // hdg_acc Heading uncertainty in degE5
-        0,
+            0,
+            // hdg_acc Heading uncertainty in degE5
+            0,
         // yaw Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use 65535 if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.
-        0);
+            0);
 
-    mavlinkSendMessage();
+        mavlinkSendMessage();
+        
+        // GPS Global origin тільки якщо є GPS home позиція
+        if (STATE(GPS_FIX_HOME)) {
+            mavlink_msg_gps_global_origin_pack(mavSystemId, mavComponentId, &mavSendMsg,
+                // latitude Latitude (WGS84), expressed as * 1E7
+                GPS_home.lat,
+                // longitude Longitude (WGS84), expressed as * 1E7
+                GPS_home.lon,
+                // altitude Altitude(WGS84), expressed as * 1000
+                GPS_home.alt * 10,
+                // time_usec Timestamp (microseconds since system boot)
+                ((uint64_t) millis()) * 1000);
 
-    // Global position
-    mavlink_msg_global_position_int_pack(mavSystemId, mavComponentId, &mavSendMsg,
-        // time_usec Timestamp (microseconds since UNIX epoch or microseconds since system boot)
-        currentTimeUs,
-        // lat Latitude in 1E7 degrees
-        gpsSol.llh.lat,
-        // lon Longitude in 1E7 degrees
-        gpsSol.llh.lon,
-        // alt Altitude in 1E3 meters (millimeters) above MSL
-        gpsSol.llh.alt * 10,
-        // relative_alt Altitude above ground in meters, expressed as * 1000 (millimeters)
-        getEstimatedActualPosition(Z) * 10,
-        // [cm/s] Ground X Speed (Latitude, positive north)
-        getEstimatedActualVelocity(X),
-        // [cm/s] Ground Y Speed (Longitude, positive east)
-        getEstimatedActualVelocity(Y),
-        // [cm/s] Ground Z Speed (Altitude, positive down)
-        getEstimatedActualVelocity(Z),
-        // [cdeg] Vehicle heading (yaw angle) (0.0..359.99 degrees, 0=north)
-        DECIDEGREES_TO_CENTIDEGREES(attitude.values.yaw)
-    );
+            mavlinkSendMessage();
+        }
+    }
 
-    mavlinkSendMessage();
+    // Загальна позиція - відправляємо якщо є GPS або барометр
+    if (hasValidGPSFix || hasBarometer) {
+        int32_t lat = 0, lon = 0, alt_msl = 0;
+        int32_t relative_alt = 0;
+        
+        // Координати з GPS якщо доступні
+        if (hasValidGPSFix) {
+            lat = gpsSol.llh.lat;
+            lon = gpsSol.llh.lon;
+            alt_msl = gpsSol.llh.alt * 10; // GPS висота над рівнем моря
+        }
+        
+        // Відносна висота з барометра або позиційної оцінки
+        if (hasBarometer) {
+            // Використовуємо барометричну висоту як відносну
+            relative_alt = getEstimatedActualPosition(Z) * 10;
+            
+            // Якщо немає GPS висоти, використовуємо барометричну як MSL
+            if (!hasValidGPSFix) {
+                alt_msl = relative_alt;
+            }
+        } else if (hasValidGPSFix) {
+            // Якщо немає барометра, використовуємо GPS висоту як відносну
+            relative_alt = gpsSol.llh.alt * 10;
+        }
 
-    mavlink_msg_gps_global_origin_pack(mavSystemId, mavComponentId, &mavSendMsg,
-        // latitude Latitude (WGS84), expressed as * 1E7
-        GPS_home.lat,
-        // longitude Longitude (WGS84), expressed as * 1E7
-        GPS_home.lon,
-        // altitude Altitude(WGS84), expressed as * 1000
-        GPS_home.alt * 10, // FIXME
-        // time_usec Timestamp (microseconds since system boot)
-        // Use millis() * 1000 as micros() will overflow after 1.19 hours.
-        ((uint64_t) millis()) * 1000);
+        mavlink_msg_global_position_int_pack(mavSystemId, mavComponentId, &mavSendMsg,
+            // time_usec Timestamp (microseconds since UNIX epoch or microseconds since system boot)
+            currentTimeUs,
+            // lat Latitude in 1E7 degrees
+            lat,
+            // lon Longitude in 1E7 degrees  
+            lon,
+            // alt Altitude in 1E3 meters (millimeters) above MSL
+            alt_msl,
+            // relative_alt Altitude above ground in meters, expressed as * 1000 (millimeters)
+            relative_alt,
+            // [cm/s] Ground X Speed (Latitude, positive north)
+            getEstimatedActualVelocity(X),
+            // [cm/s] Ground Y Speed (Longitude, positive east)
+            getEstimatedActualVelocity(Y),
+            // [cm/s] Ground Z Speed (Altitude, positive down)
+            getEstimatedActualVelocity(Z),
+            // [cdeg] Vehicle heading (yaw angle) (0.0..359.99 degrees, 0=north)
+            DECIDEGREES_TO_CENTIDEGREES(attitude.values.yaw)
+        );
 
-    mavlinkSendMessage();
+        mavlinkSendMessage();
+    }
 }
 #endif
 
@@ -869,11 +902,14 @@ void mavlinkSendBatteryTemperatureStatusText(void)
 
 
     int16_t temperature;
-    sensors(SENSOR_BARO) ? getBaroTemperature(&temperature) : getIMUTemperature(&temperature);
+    float press_abs = 10000.0;
+    float press_diff = 0.0;
+    sensors(SENSOR_BARO) ? getBaroTemperature(&temperature)
+                         : getIMUTemperature(&temperature);
     mavlink_msg_scaled_pressure_pack(mavSystemId, mavComponentId, &mavSendMsg,
         millis(),
-        0,
-        0,
+        press_abs,
+        press_diff,
         temperature * 10,
         0);
 
