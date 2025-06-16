@@ -335,6 +335,12 @@ int32_t baroGetLatestAltitude(void)
     return baro.BaroAlt;
 }
 
+int32_t baroGetLatestAltitudeMSL(void)
+{
+    return pressureToAltitude(baro.baroPressure) ;
+}
+
+
 int32_t baroGetLatestPressure(void) 
 { 
     return baro.baroPressure; 
