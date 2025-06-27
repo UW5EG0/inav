@@ -488,7 +488,7 @@ cfTask_t cfTasks[TASK_COUNT] = {
     [TASK_SERIAL] = {
         .taskName = "SERIAL",
         .taskFunc = taskHandleSerial,
-        .desiredPeriod = TASK_PERIOD_HZ(100),     // 100 Hz should be enough to flush up to 115 bytes @ 115200 baud
+        .desiredPeriod = TASK_PERIOD_HZ(250),     // 100 Hz should be enough to flush up to 115 bytes @ 115200 baud
         .staticPriority = TASK_PRIORITY_LOW,
     },
 
