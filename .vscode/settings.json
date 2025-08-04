@@ -12,7 +12,12 @@
         "max7456.h": "c",
         "display.h": "c",
         "display_font_metadata.h": "c",
-        "settings.h": "c"
+        "settings.h": "c",
+        "cstdint": "c",
+        "regex": "c",
+        "stdbool.h": "c",
+        "io.h": "c",
+        "esc_sensor.h": "c"
     },
     "editor.tabSize": 4,
     "editor.insertSpaces": true,

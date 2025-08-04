@@ -1640,11 +1640,6 @@ groups:
   condition: USE_RPM_FILTER
   type: rpmFilterConfig_t
   members:
-  - name: rpm_gyro_filter_enabled
-    description: "Enables gyro RPM filtere. Set to `ON` only when ESC telemetry is working and rotation speed of the motors is correctly reported to INAV"
-    default_value: OFF
-    field: gyro_filter_enabled
-    type: bool
   - name: rpm_gyro_harmonics
     description: "Number of harmonic frequences to be covered by gyro RPM filter. Default value of `1` usually works just fine"
     default_value: 1
@@ -1666,6 +1661,14 @@ groups:
     type: uint16_t
     min: 1
     max: 3000
+  - name: rpm_gyro_filter_enabled
+    description: "Enables gyro RPM filtere. Set to `ON` only when ESC telemetry is working and rotation speed of the motors is correctly reported to INAV"
+    default_value: OFF
+    field: gyro_filter_enabled
+    type: bool
+    min: 0
+    max: 1
+
 - name: PG_GPS_CONFIG
   headers: [ "io/gps.h" ]
   type: gpsConfig_t

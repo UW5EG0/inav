@@ -14,3 +14,33 @@
  * You should have received a copy of the GNU General Public License
  * along with INAV.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#include <stdint.h>
+
+#include "platform.h"
+
+#include "drivers/bus.h"
+#include "drivers/io.h"
+#include "drivers/pwm_mapping.h"
+#include "drivers/timer.h"
+#include "drivers/pinio.h"
+#include "drivers/sensor.h"
+
+timerHardware_t timerHardware[] = {
+    DEF_TIM(TIM4, CH1, PB6,  TIM_USE_OUTPUT_AUTO, 0, 0), // S1
+    DEF_TIM(TIM4, CH2, PB7,  TIM_USE_OUTPUT_AUTO, 0, 0), // S2
+    DEF_TIM(TIM4, CH3, PB8,  TIM_USE_OUTPUT_AUTO, 0, 0), // S3
+    DEF_TIM(TIM4, CH4, PB9,  TIM_USE_OUTPUT_AUTO, 0, 0), // S4
+
+    DEF_TIM(TIM3, CH3, PB0,  TIM_USE_OUTPUT_AUTO, 0, 0), // S5
+    DEF_TIM(TIM3, CH4, PB1,  TIM_USE_OUTPUT_AUTO, 0, 0), // S6
+    DEF_TIM(TIM3, CH2, PB5,  TIM_USE_OUTPUT_AUTO, 0, 0), // S7
+    DEF_TIM(TIM3, CH1, PB4,  TIM_USE_OUTPUT_AUTO, 0, 0), // S8
+
+    DEF_TIM(TIM1, CH1, PA8,  TIM_USE_OUTPUT_AUTO, 0, 0), // S9
+    DEF_TIM(TIM8, CH4, PC9,  TIM_USE_LED, 0, 0),   // LED
+    // DEF_TIM( TIM9, CH2, PA3,  TIM_USE_PPM, 0, 0)
+    
+};
+
+const int timerHardwareCount = sizeof(timerHardware) / sizeof(timerHardware[0]);
