@@ -23,7 +23,7 @@
 #define USBD_PRODUCT_STRING "HAKRCH743"
 
 #define USE_TARGET_CONFIG
-
+#define USE_TARGET_HARDWARE_DESCRIPTORS
 
 /*** IMU generic ***/
 

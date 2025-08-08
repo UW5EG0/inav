@@ -28,7 +28,18 @@
 
 BUSDEV_REGISTER_SPI_TAG(busdev_icm42688,  DEVHW_ICM42605,  IMU1_SPI_BUS,   IMU1_CS_PIN,   NONE,   0,  DEVFLAGS_NONE,  IMU1_ALIGN);
 BUSDEV_REGISTER_SPI_TAG(busdev_icm42688_2, DEVHW_ICM42605, IMU2_SPI_BUS,   IMU2_CS_PIN,   NONE,   1,  DEVFLAGS_NONE,  IMU2_ALIGN);
+BUSDEV_REGISTER_SPI(busdev_max7456, DEVHW_MAX7456, MAX7456_SPI_BUS, MAX7456_CS_PIN, NONE, DEVFLAGS_USE_RAW_REGISTERS | DEVFLAGS_SPI_MODE_0, 0);
 
+#if !defined(DPS310_I2C_ADDR)
+        #define DPS310_I2C_ADDR (0x76)
+#endif
+BUSDEV_REGISTER_I2C(busdev_dps310,      DEVHW_DPS310,       BARO_I2C_BUS,     DPS310_I2C_ADDR,    NONE,           DEVFLAGS_NONE, 0);
+   
+ #if !defined(BMP280_I2C_ADDR)
+        #define BMP280_I2C_ADDR (0x76)
+    #endif
+BUSDEV_REGISTER_I2C(busdev_bmp280,      DEVHW_BMP280,       BMP280_I2C_BUS,     BMP280_I2C_ADDR,	NONE,           DEVFLAGS_NONE,      0);
+  
 timerHardware_t timerHardware[] = {
     // DEF_TIM(TIM5, CH4, PA3, TIM_USE_PPM, 0, 0),  // PPM
     DEF_TIM(TIM5, CH1, PA0, TIM_USE_OUTPUT_AUTO, 0, 2),   // M1  
@@ -46,6 +57,6 @@ timerHardware_t timerHardware[] = {
     DEF_TIM(TIM3, CH3, PB0, TIM_USE_OUTPUT_AUTO, 0, 0),   // S3
     DEF_TIM(TIM3, CH4, PB1, TIM_USE_OUTPUT_AUTO, 0, 1),   // S4
 
-    DEF_TIM(TIM1,  CH1, PA8,  TIM_USE_LED, 0, 9),    // LED_2812
+  //  DEF_TIM(TIM1,  CH1, PA8,  TIM_USE_LED, 0, 9),    // LED_2812
 };
 const int timerHardwareCount = sizeof(timerHardware) / sizeof(timerHardware[0]);
