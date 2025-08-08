@@ -47,8 +47,10 @@
 
 #define USE_PINIO
 #define USE_PINIOBOX
-#define PINIO1_PIN              PD10
-#define PINIO2_PIN              PD11
+#define PINIO1_PIN                  PD10
+#define PINIO1_FLAGS                PINIO_FLAGS_INVERTED
+#define PINIO2_PIN                  PD11
+#define PINIO2_FLAGS                PINIO_FLAGS_INVERTED
 
 
 /*** UART ***/
@@ -102,17 +104,6 @@
 #define IMU1_SPI_BUS            BUS_SPI1
 #define IMU1_CS_PIN             PC15
 
-/*** MAX7456 ***/ 
-
-#define USE_SPI_DEVICE_3
-#define SPI3_SCK_PIN            PB3
-#define SPI3_MISO_PIN           PB4
-#define SPI3_MOSI_PIN           PB5
-
-#define USE_MAX7456
-#define MAX7456_SPI_BUS         BUS_SPI3
-#define MAX7456_CS_PIN      PE2
-
 /*** IMU 2 ***/ 
 
 #define USE_SPI_DEVICE_4
@@ -123,6 +114,19 @@
 #define IMU2_ALIGN              CW270_DEG
 #define IMU2_SPI_BUS            BUS_SPI4
 #define IMU2_CS_PIN             PC13
+
+/*** MAX7456 ***/ 
+
+#define USE_SPI_DEVICE_3
+#define SPI3_SCK_PIN            PB3
+#define SPI3_MISO_PIN           PB4
+#define SPI3_MOSI_PIN           PB5
+
+#define MAX7456_SPI_BUS         BUS_SPI3
+#define MAX7456_CS_PIN          PE2
+#define USE_MAX7456
+
+
 
 /*** External interrupts ***/
 #define USE_EXTI
@@ -168,8 +172,8 @@
 #define MAG_I2C_BUS          BUS_I2C2
 #define USE_MAG_ALL
 
-#define TEMPERATURE_I2C_BUS     BUS_I2C2
-#define PITOT_I2C_BUS           BUS_I2C2
+//#define TEMPERATURE_I2C_BUS     BUS_I2C2
+//#define PITOT_I2C_BUS           BUS_I2C2
 
 /*** ADC ***/
 
@@ -186,7 +190,7 @@
 #define RSSI_ADC_CHANNEL            ADC_CHN_3
 #define AIRSPEED_ADC_CHANNEL        ADC_CHN_4
 
-#define VBAT_SCALE_DEFAULT          2100
+#define VBAT_SCALE_DEFAULT          1635
 #define CURRENT_METER_SCALE         250
 
 
@@ -198,18 +202,22 @@
 #define USE_OPFLOW_MSP
 
 /*** Misc ***/
+
+#define SENSORS_SET (SENSOR_ACC | SENSOR_BARO)
+
 #define DEFAULT_FEATURES     (FEATURE_TX_PROF_SEL | FEATURE_CURRENT_METER | FEATURE_TELEMETRY | FEATURE_VBAT | FEATURE_OSD )
 #define USE_DSHOT
+#define USE_DSHOT_DMAR
 #define USE_ESC_SENSOR
 #define USE_SERIAL_4WAY_BLHELI_INTERFACE
 
-#define ENABLE_BLACKBOX_LOGGING_ON_SDCARD_BY_DEFAULT
 
 #define DEFAULT_RX_TYPE         RX_TYPE_SERIAL
 #define SERIALRX_PROVIDER       SERIALRX_CRSF
 #define SERIALRX_UART           SERIAL_PORT_USART2
+#define SMARTAUDIO_UART         SERIAL_PORT_USART4
 
-#define GPS_UART                SERIAL_PORT_USART3
+//#define GPS_UART                SERIAL_PORT_USART3
 
 #define TARGET_IO_PORTA 0xffff
 #define TARGET_IO_PORTB 0xffff
