@@ -38,7 +38,7 @@ BUSDEV_REGISTER_I2C(busdev_dps310,      DEVHW_DPS310,       BARO_I2C_BUS,     DP
  #if !defined(BMP280_I2C_ADDR)
         #define BMP280_I2C_ADDR (0x76)
     #endif
-BUSDEV_REGISTER_I2C(busdev_bmp280,      DEVHW_BMP280,       BMP280_I2C_BUS,     BMP280_I2C_ADDR,	NONE,           DEVFLAGS_NONE,      0);
+BUSDEV_REGISTER_I2C(busdev_bmp280,      DEVHW_BMP280,       BARO_I2C_BUS,     BMP280_I2C_ADDR,	NONE,           DEVFLAGS_NONE,      0);
   
 timerHardware_t timerHardware[] = {
     // DEF_TIM(TIM5, CH4, PA3, TIM_USE_PPM, 0, 0),  // PPM
