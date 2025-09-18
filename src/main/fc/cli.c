@@ -54,6 +54,7 @@ bool cliMode = false;
 #include "drivers/pwm_mapping.h"
 #include "drivers/buf_writer.h"
 #include "drivers/bus_i2c.h"
+#include "drivers/bus_spi.h"
 #include "drivers/compass/compass.h"
 #include "drivers/flash.h"
 #include "drivers/io.h"
@@ -4129,6 +4130,46 @@ static void cliStatus(char *cmdline)
 #elif !defined(SITL_BUILD)
     const uint16_t i2cErrorCounter = 0;
 #endif
+#ifdef USE_SPI
+    cliPrintLine("SPI busses info:");
+    //spiHardwareMap[];
+    cliPrintLinef("SPI max index per chip: %d", SPIDEV_COUNT);
+    for (int spiIndex = 0; spiIndex < SPIDEV_COUNT; spiIndex++) {
+        const SPIDevice spiDevice = spiDeviceByInstance(spiInstanceByDevice(spiIndex));
+        if (spiDevice != SPIINVALID) {
+         cliPrintf("SPI%d: ", spiIndex + 1);
+         const spiDevice_t *dev = spiHWMapByDevice(spiIndex);
+
+          if (dev->dev) {
+             cliPrintf("SCK:P%c%01d AF%01d | MISO:P%c%01d  AF%01d | MOSI:P%c%01d  AF%01d ", 
+                DEFIO_TAG_GPIOID(dev->sck) + 'A', 
+                DEFIO_TAG_PIN(dev->sck),
+                dev->sckAF,
+                DEFIO_TAG_GPIOID(dev->miso) + 'A', 
+                DEFIO_TAG_PIN(dev->miso),
+                dev->misoAF,
+                DEFIO_TAG_GPIOID(dev->mosi) + 'A', 
+                DEFIO_TAG_PIN(dev->mosi),
+                dev->mosiAF
+            );
+            if( DEFIO_TAG_GPIOID(dev->nss) > -1 ) {
+                cliPrintf("CS:P%c%01d ", DEFIO_TAG_GPIOID(dev->nss) + 'A',
+                      DEFIO_TAG_PIN(dev->nss));
+            };
+            
+            if (dev->initDone) {
+                cliPrintf("INIT_DONE ");
+            } else {
+                cliPrintf("INIT_INCOMPLETE ");
+            };
+
+          } else {
+              cliPrintf("BUS NOT ATTACHED");
+          }
+          cliPrintLinefeed();
+        }
+    }
+#endif  // USE_SPI
 
 #ifdef STACK_CHECK
     cliPrintf("Stack used: %d, ", stackUsedSize());
@@ -4217,8 +4258,10 @@ static void cliStatus(char *cmdline)
     cliPrint("OSD: ");
 #if defined(USE_OSD)
     displayPort_t *osdDisplayPort = osdGetDisplayPort();
+    bool isReady = displayIsReady(osdDisplayPort);
     if (osdDisplayPort != NULL) {
-        cliPrintf("%s [%u x %u]", osdDisplayPort->displayPortType, osdDisplayPort->cols, osdDisplayPort->rows);
+        cliPrintf("%s [%u x %u] %s%s", osdDisplayPort->displayPortType, osdDisplayPort->cols, osdDisplayPort->rows, \
+            (osdDisplayPort->cleared)?("CLRD "):(""),(isReady)?("RDY "):(""));
     } else {
         cliPrint("not enabled");
     }

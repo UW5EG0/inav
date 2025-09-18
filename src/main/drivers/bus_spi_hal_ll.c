@@ -49,10 +49,10 @@
 #endif
 
 #ifndef SPI4_SCK_PIN
-#define SPI4_NSS_PIN    PA15
-#define SPI4_SCK_PIN    PB3
-#define SPI4_MISO_PIN   PB4
-#define SPI4_MOSI_PIN   PB5
+#define SPI4_NSS_PIN    PE4
+#define SPI4_SCK_PIN    PE12
+#define SPI4_MISO_PIN   PE13
+#define SPI4_MOSI_PIN   PE14
 #endif
 
 #ifndef SPI1_NSS_PIN
@@ -208,9 +208,19 @@ SPIDevice spiDeviceByInstance(SPI_TypeDef *instance)
 
     if (instance == SPI3)
         return SPIDEV_3;
-
+#ifdef SPI4
     if (instance == SPI4)
         return SPIDEV_4;
+#endif // SPI4
+#ifdef SPI5
+    if (instance == SPI5)
+        return SPIDEV_5;
+#endif // SPI5
+#ifdef SPI6
+    if (instance == SPI6)
+        return SPIDEV_6;
+#endif // SPI6
+    
 
     return SPIINVALID;
 }
@@ -398,4 +408,9 @@ void spiSetSpeed(SPI_TypeDef *instance, SPIClockSpeed_e speed)
 SPI_TypeDef * spiInstanceByDevice(SPIDevice device)
 {
     return spiHardwareMap[device].dev;
+}
+
+spiDevice_t * spiHWMapByDevice(SPIDevice device)
+{
+    return &spiHardwareMap[device];
 }

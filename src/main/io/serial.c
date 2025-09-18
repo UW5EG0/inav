@@ -143,6 +143,14 @@ void pgResetFn_serialConfig(serialConfig_t *serialConfig)
     }
 #endif
 
+#ifdef TRAMP_UART
+    serialPortConfig_t *vtxTrampUartConfig = serialFindPortConfiguration(TRAMP_UART);
+    if (vtxTrampUartConfig) {
+        vtxTrampUartConfig->functionMask = FUNCTION_VTX_TRAMP;
+    }
+#endif
+
+
 #ifdef USE_VCP
     if (serialConfig->portConfigs[0].identifier == SERIAL_PORT_USB_VCP) {
         serialPortConfig_t * uart1Config = serialFindPortConfiguration(SERIAL_PORT_USART1);

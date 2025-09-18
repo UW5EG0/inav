@@ -56,7 +56,9 @@ typedef enum SPIDevice {
     SPIDEV_1   = 0,
     SPIDEV_2,
     SPIDEV_3,
-    SPIDEV_4
+    SPIDEV_4,
+    SPIDEV_5,
+    SPIDEV_6,
 } SPIDevice;
 
 #if defined(STM32F4)
@@ -114,4 +116,5 @@ bool spiInitDevice(SPIDevice device, bool leadingEdge);
     void spiResetErrorCounter(SPI_TypeDef *instance);
     SPIDevice spiDeviceByInstance(SPI_TypeDef *instance);
     SPI_TypeDef * spiInstanceByDevice(SPIDevice device);
+    spiDevice_t * spiHWMapByDevice(SPIDevice device);
 #endif

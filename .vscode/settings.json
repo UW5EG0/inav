@@ -17,7 +17,13 @@
         "regex": "c",
         "stdbool.h": "c",
         "io.h": "c",
-        "esc_sensor.h": "c"
+        "esc_sensor.h": "c",
+        "sensor.h": "c",
+        "bus_spi.h": "c",
+        "io_types.h": "c",
+        "compare": "c",
+        "bus_i2c.h": "c",
+        "compass.h": "c"
     },
     "editor.tabSize": 4,
     "editor.insertSpaces": true,

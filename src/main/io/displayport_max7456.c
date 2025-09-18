@@ -78,6 +78,10 @@ static int drawScreen(displayPort_t *displayPort)
 
     return 0;
 }
+static bool isReady(displayPort_t *displayPort) {
+     UNUSED(displayPort);
+    return max7456isReady();
+}
 
 static int screenSize(const displayPort_t *displayPort)
 {
@@ -182,6 +186,7 @@ static const displayPortVTable_t max7456VTable = {
     .writeChar = writeChar,
     .readChar = readChar,
     .isTransferInProgress = isTransferInProgress,
+    .isReady = isReady,
     .heartbeat = heartbeat,
     .resync = resync,
     .txBytesFree = txBytesFree,

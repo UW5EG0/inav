@@ -49,6 +49,14 @@
 #define SPI3_MOSI_PIN   PB5
 #endif
 
+#ifndef SPI4_SCK_PIN
+#define SPI4_NSS_PIN    PA15
+#define SPI4_SCK_PIN    PB3
+#define SPI4_MISO_PIN   PB4
+#define SPI4_MOSI_PIN   PB5
+#endif
+
+
 #ifndef SPI1_NSS_PIN
 #define SPI1_NSS_PIN NONE
 #endif
@@ -58,6 +66,10 @@
 #ifndef SPI3_NSS_PIN
 #define SPI3_NSS_PIN NONE
 #endif
+#ifndef SPI4_NSS_PIN
+#define SPI4_NSS_PIN NONE
+#endif
+
 
 #if defined(STM32F4)
 #if defined(USE_SPI_DEVICE_1)
@@ -70,7 +82,7 @@ static const uint32_t spiDivisorMapFast[] = {
 };
 #endif
 
-#if defined(USE_SPI_DEVICE_2) || defined(USE_SPI_DEVICE_3)
+#if defined(USE_SPI_DEVICE_2) || defined(USE_SPI_DEVICE_3) || defined(USE_SPI_DEVICE_4)
 static const uint32_t spiDivisorMapSlow[] = {
     SPI_BaudRatePrescaler_256,    // SPI_CLOCK_INITIALIZATON      164.062 KBits/s
     SPI_BaudRatePrescaler_64,     // SPI_CLOCK_SLOW               656.25 KBits/s
@@ -96,7 +108,11 @@ static spiDevice_t spiHardwareMap[] = {
 #else
     { .dev = NULL },    // No SPI3
 #endif
+#ifdef USE_SPI_DEVICE_4
+    { .dev = SPI4, .nss = IO_TAG(SPI4_NSS_PIN), .sck = IO_TAG(SPI4_SCK_PIN), .miso = IO_TAG(SPI4_MISO_PIN), .mosi = IO_TAG(SPI4_MOSI_PIN), .rcc = RCC_APB1(SPI4), .af = GPIO_AF_SPI4, .divisorMap = spiDivisorMapSlow },
+#else
     { .dev = NULL },    // No SPI4
+#endif
 };
 #else
 #error "Invalid CPU"
@@ -112,9 +128,23 @@ SPIDevice spiDeviceByInstance(SPI_TypeDef *instance)
 
     if (instance == SPI3)
         return SPIDEV_3;
+    
+#ifdef SPI4
+    if (instance == SPI4)
+        return SPIDEV_4;
+#endif // SPI4
+#ifdef SPI5
+    if (instance == SPI5)
+        return SPIDEV_5;
+#endif // SPI5
+#ifdef SPI6
+    if (instance == SPI6)
+        return SPIDEV_6;
+#endif // SPI6
+    
 
     return SPIINVALID;
-}
+};
 
 bool spiInitDevice(SPIDevice device, bool leadingEdge)
 {

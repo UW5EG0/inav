@@ -205,6 +205,7 @@ typedef struct max7456State_s {
     uint8_t  hosRegValue; // HOS (Horizontal offset register) value
     uint8_t  vosRegValue; // VOS (Vertical offset register) value
     bool isInitialized;
+    bool isReady;
     bool mutex;
     max7456Registers_t registers;
 } max7456State_t;
@@ -384,12 +385,12 @@ void max7456Init(const videoSystem_e videoSystem, int h_offset, int v_offset)
 {
     uint8_t buf[(MAX7456_LINES_PAL + 1) * 2];
     int bufPtr;
+    state.isReady = false;
     state.dev = busDeviceInit(BUSTYPE_SPI, DEVHW_MAX7456, 0, OWNER_OSD);
 
     if (state.dev == NULL) {
         return;
     }
-
     busSetSpeed(state.dev, BUS_SPEED_STANDARD);
 
     // force soft reset on Max7456
@@ -427,6 +428,7 @@ void max7456Init(const videoSystem_e videoSystem, int h_offset, int v_offset)
     busTransfer(state.dev, NULL, buf, bufPtr);
 }
 
+bool max7456isReady(void) { return state.isReady; }
 
 
 void max7456ClearScreen(void)
@@ -698,7 +700,7 @@ void max7456ReadNvm(uint16_t char_address, osdCharacter_t *chr)
         busRead(state.dev, MAX7456ADD_CMDO, &chr->data[ii]);
     }
 
-    max7456OSDSetEnabled(enabled);
+    max7456OSDSetEnabled(true);
     max7456Unlock();
 }
 
